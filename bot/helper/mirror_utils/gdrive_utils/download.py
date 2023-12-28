@@ -125,7 +125,6 @@ class gdDownload(GoogleDriveHelper):
             try:
                 self.status, done = downloader.next_chunk()
             except HttpError as err:
-                LOGGER.error(err)
                 if err.resp.status in [500, 502, 503, 504, 429] and retries < 10:
                     retries += 1
                     continue
