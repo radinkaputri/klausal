@@ -1,3 +1,4 @@
+from httpx import AsyncClient
 from asyncio import (
     create_subprocess_exec,
     create_subprocess_shell,
@@ -121,9 +122,9 @@ def arg_parser(items, arg_base):
 
 async def get_content_type(url):
     try:
-        async with ClientSession(trust_env=True) as session:
-            async with session.get(url, verify_ssl=False) as response:
-                return response.headers.get("Content-Type")
+        async with AsyncClient() as client:
+            response = await client.get(url, allow_redirects=True, verify=False)
+            return response.headers.get("Content-Type")
     except:
         return None
 
