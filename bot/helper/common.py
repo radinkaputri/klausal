@@ -513,9 +513,11 @@ class TaskConfig:
         pswd = self.compress if isinstance(self.compress, str) else ""
         if self.seed and self.isLeech:
             self.newDir = f"{self.dir}10000"
-            up_path = f"{self.newDir}/{self.name}.zip"
+            up_path = f"{self.newDir}/{self.name}.7z"
+            delete = False
         else:
-            up_path = f"{dl_path}.zip"
+            up_path = f"{dl_path}.7z"
+            delete = True
         async with task_dict_lock:
             task_dict[self.mid] = ZipStatus(self, size, gid)
         if self.equalSplits:
