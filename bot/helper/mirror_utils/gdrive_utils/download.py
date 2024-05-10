@@ -94,12 +94,22 @@ class gdDownload(GoogleDriveHelper):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type(Exception)),
     )
-    def _download_file(self, file_id, path, filename, mime_type):
-        request = self.service.files().get_media(fileId=file_id, supportsAllDrives=True)
+    def _download_file(self, file_id, path, filename, mime_type, export=False):
+        if export:
+            request = self.service.files().export_media(
+                fileId=file_id, mimeType="application/pdf"
+            )
+        else:
+            request = self.service.files().get_media(
+                fileId=file_id, supportsAllDrives=True, acknowledgeAbuse=True
+            )
         filename = filename.replace("/", "")
+        if export:
+            filename = f"{filename}.pdf"
         if len(filename.encode()) > 255:
             ext = ospath.splitext(filename)[1]
             filename = f"{filename[:245]}{ext}"
+
             if self.listener.name.endswith(ext):
                 self.listener.name = filename
         if self.is_cancelled:
@@ -115,13 +125,18 @@ class gdDownload(GoogleDriveHelper):
             try:
                 self.status, done = downloader.next_chunk()
             except HttpError as err:
-                if err.resp.status in [500, 502, 503, 504] and retries < 10:
+                LOGGER.error(err)
+                if err.resp.status in [500, 502, 503, 504, 429] and retries < 10:
                     retries += 1
                     continue
                 if err.resp.get("content-type", "").startswith("application/json"):
                     reason = (
                         eval(err.content).get("error").get("errors")[0].get("reason")
                     )
+                    if "fileNotDownloadable" in reason and "document" in mime_type:
+                        return self._download_file(
+                            file_id, path, filename, mime_type, True
+                        )
                     if reason not in [
                         "downloadQuotaExceeded",
                         "dailyLimitExceeded",
