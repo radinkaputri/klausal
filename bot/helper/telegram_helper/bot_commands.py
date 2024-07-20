@@ -10,7 +10,7 @@ class _BotCommands:
         self.LeechCommand = [f"leech{CMD_SUFFIX}", f"l{CMD_SUFFIX}"]
         self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"ql{CMD_SUFFIX}"]
         self.YtdlLeechCommand = [f"ytdlleech{CMD_SUFFIX}", f"yl{CMD_SUFFIX}"]
-        self.CloneCommand = [f"clone{CMD_SUFFIX}", f"c{CMD_SUFFIX"]
+        self.CloneCommand = [f"clone{CMD_SUFFIX}", f"c{CMD_SUFFIX}"]
         self.CountCommand = f"count{CMD_SUFFIX}"
         self.DeleteCommand = f"del{CMD_SUFFIX}"
         self.CancelTaskCommand = f"cancel{CMD_SUFFIX}"
@@ -23,7 +23,7 @@ class _BotCommands:
         self.UnAuthorizeCommand = f"unauthorize{CMD_SUFFIX}"
         self.AddSudoCommand = f"addsudo{CMD_SUFFIX}"
         self.RmSudoCommand = f"rmsudo{CMD_SUFFIX}"
-        self.PingCommand = [f"ping{CMD_SUFFIX}", f"p{CMD_SUFFIX}"
+        self.PingCommand = [f"ping{CMD_SUFFIX}", f"p{CMD_SUFFIX}"]
         self.RestartCommand = [f"restart{CMD_SUFFIX}", f"r{CMD_SUFFIX}"]
         self.StatsCommand = f"stats{CMD_SUFFIX}"
         self.HelpCommand = f"help{CMD_SUFFIX}"
