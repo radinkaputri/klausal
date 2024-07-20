@@ -426,10 +426,10 @@ leech - or /l Leech
 qbleech - or /ql Leech torrent using qBittorrent
 ytdl - or /y Mirror yt-dlp supported link
 ytdlleech - or /yl Leech through yt-dlp supported link
-clone - Copy file/folder to Drive
+clone - or /c Copy file/folder to Drive
 count - Count file/folder from Drive
-usetting - User settings
-bsetting - Bot settings
+usetting - or /us User settings
+bsetting - or /bs Bot settings
 status - Get Mirror Status message
 btsel - Select files from torrent
 rss - Rss menu
@@ -440,9 +440,9 @@ cancelall - Cancel all tasks
 del - Delete file/folder from Drive
 log - Get the Bot Log
 shell - Run commands in Shell
-restart - Restart the Bot
+restart - or /r Restart the Bot
 stats - Bot Usage Stats
-ping - Ping the Bot
+ping - or /p Ping the Bot
 help - All cmds with description
 ```
 
