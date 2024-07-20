@@ -1,4 +1,4 @@
-FROM mogambo1/mirrorbot:latest
+FROM clyfly/zymltb:latest
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
