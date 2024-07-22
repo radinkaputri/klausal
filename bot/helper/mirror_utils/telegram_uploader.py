@@ -55,6 +55,7 @@ class TgUploader:
         self._up_path = ""
         self._lprefix = ""
         self._media_group = False
+        self._is_private = False
 
     async def _upload_progress(self, current, total):
         if self._is_cancelled:
@@ -102,6 +103,7 @@ class TgUploader:
                         disable_web_page_preview=True,
                         disable_notification=True,
                     )
+                    self._is_private = self._sent_msg.chat.type.name == "PRIVATE"
             except Exception as e:
                 await self._listener.onUploadError(str(e))
                 return False
@@ -263,8 +265,10 @@ class TgUploader:
                     await self._upload_file(cap_mono, file_)
                     if self._is_cancelled:
                         return
-                    if not self._is_corrupted and (
-                        self._listener.isSuperChat or self._listener.upDest
+                    if (
+                        not self._is_corrupted
+                        and (self._listener.isSuperChat or self._listener.upDest)
+                        and not self._is_private
                     ):
                         self._msgs_dict[self._sent_msg.link] = file_
                     await sleep(1)
