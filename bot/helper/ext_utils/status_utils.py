@@ -6,49 +6,47 @@ from bot import DOWNLOAD_DIR, task_dict, task_dict_lock, botStartTime, config_di
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
-
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
-
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload"
-    STATUS_DOWNLOADING = "Download"
-    STATUS_CLONING = "Clone"
-    STATUS_QUEUEDL = "QueueDl"
-    STATUS_QUEUEUP = "QueueUp"
-    STATUS_PAUSED = "Pause"
-    STATUS_ARCHIVING = "Archive"
-    STATUS_EXTRACTING = "Extract"
-    STATUS_SPLITTING = "Split"
-    STATUS_CHECKING = "CheckUp"
-    STATUS_SEEDING = "Seed"
-    STATUS_SAMVID = "SamVid"
+    STATUS_UPLOADING = "Upload 📤"
+    STATUS_DOWNLOADING = "Download 📥"
+    STATUS_CLONING = "Clone 🔃"
+    STATUS_QUEUEDL = "QueueDL ⏳"
+    STATUS_QUEUEUP = "QueueUL ⏳"
+    STATUS_PAUSED = "Paused ⛔️"
+    STATUS_ARCHIVING = "Archive 🛠"
+    STATUS_EXTRACTING = "Extract 📂"
+    STATUS_SPLITTING = "Split ✂️"
+    STATUS_CHECKING = "CheckUp ⏱"
+    STATUS_SEEDING = "Seed 🌧"
+    STATUS_SAMVID = "SampleVid 🎬"
 
-
-STATUS_VALUES = [
-    ("ALL", "All"),
-    ("DL", MirrorStatus.STATUS_DOWNLOADING),
-    ("UP", MirrorStatus.STATUS_UPLOADING),
-    ("QD", MirrorStatus.STATUS_QUEUEDL),
-    ("QU", MirrorStatus.STATUS_QUEUEUP),
-    ("AR", MirrorStatus.STATUS_ARCHIVING),
-    ("EX", MirrorStatus.STATUS_EXTRACTING),
-    ("CL", MirrorStatus.STATUS_CLONING),
-    ("SD", MirrorStatus.STATUS_SEEDING),
-]
-
+STATUSES = {
+    "ALL": "All",
+    "DL": MirrorStatus.STATUS_DOWNLOADING,
+    "UP": MirrorStatus.STATUS_UPLOADING,
+    "QD": MirrorStatus.STATUS_QUEUEDL,
+    "QU": MirrorStatus.STATUS_QUEUEUP,
+    "AR": MirrorStatus.STATUS_ARCHIVING,
+    "EX": MirrorStatus.STATUS_EXTRACTING,
+    "SD": MirrorStatus.STATUS_SEEDING,
+    "CL": MirrorStatus.STATUS_CLONING,
+    "SP": MirrorStatus.STATUS_SPLITTING,
+    "CK": MirrorStatus.STATUS_CHECKING,
+    "SV": MirrorStatus.STATUS_SAMVID,
+    "PA": MirrorStatus.STATUS_PAUSED,
+}
 
 async def getTaskByGid(gid: str):
     async with task_dict_lock:
         return next((tk for tk in task_dict.values() if tk.gid() == gid), None)
-
 
 async def getAllTasks(req_status: str):
     async with task_dict_lock:
         if req_status == "all":
             return list(task_dict.values())
         return [tk for tk in task_dict.values() if tk.status() == req_status]
-
 
 def get_readable_file_size(size_in_bytes: int):
     if size_in_bytes is None:
@@ -63,7 +61,6 @@ def get_readable_file_size(size_in_bytes: int):
         else f"{size_in_bytes:.2f}B"
     )
 
-
 def get_readable_time(seconds: int):
     periods = [("d", 86400), ("h", 3600), ("m", 60), ("s", 1)]
     result = ""
@@ -72,7 +69,6 @@ def get_readable_time(seconds: int):
             period_value, seconds = divmod(seconds, period_seconds)
             result += f"{int(period_value)}{period_name}"
     return result
-
 
 def speed_string_to_bytes(size_text: str):
     size = 0
@@ -89,7 +85,6 @@ def speed_string_to_bytes(size_text: str):
         size += float(size_text.split("b")[0])
     return size
 
-
 def get_progress_bar_string(pct):
     pct = float(pct.strip("%"))
     p = min(max(pct, 0), 100)
@@ -97,7 +92,6 @@ def get_progress_bar_string(pct):
     p_str = "●" * cFull
     p_str += "○" * (12 - cFull)
     return f"[{p_str}]"
-
 
 def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     msg = ""
@@ -131,19 +125,24 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         tasks[start_position : STATUS_LIMIT + start_position], start=1
     ):
         tstatus = task.status()
+        user_tag = task.listener.tag.replace("@", "").replace("_", " ")
+        cancel_task = (f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>")
+        msg += "<blockquote>"
         if task.listener.isSuperChat:
-            msg += f"<b>{index+start_position}.<a href='{task.listener.message.link}'>{tstatus}</a>: </b>"
+            msg += f"<b>{index + start_position}.<a href='{task.listener.message.link}'>Task</a>: </b>"
         else:
-            msg += f"<b>{index+start_position}.{tstatus}: </b>"
+            msg += f"<b>{index + start_position}.Task: </b>"
         msg += f"<code>{escape(f'{task.name()}')}</code>"
+        msg += "</blockquote>"
         if tstatus not in [
-            MirrorStatus.STATUS_SPLITTING,
             MirrorStatus.STATUS_SEEDING,
-            MirrorStatus.STATUS_SAMVID,
+            MirrorStatus.STATUS_QUEUEUP,
         ]:
             msg += f"\n{get_progress_bar_string(task.progress())} {task.progress()}"
+            msg += f"\n<b>Status: </b>{tstatus}"
             msg += f"\n<b>Processed:</b> {task.processed_bytes()} of {task.size()}"
             msg += f"\n<b>Speed:</b> {task.speed()} | <b>ETA:</b> {task.eta()}"
+            msg += f"\n<b>User: </b><spoiler>{user_tag}</spoiler>"
             if hasattr(task, "seeders_num"):
                 try:
                     msg += f"\n<b>Seeders:</b> {task.seeders_num()} | <b>Leechers:</b> {task.leechers_num()}"
@@ -157,7 +156,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
             msg += f" | <b>Time: </b>{task.seeding_time()}"
         else:
             msg += f"\n<b>Size: </b>{task.size()}"
-        msg += f"\n<b>Stop: </b><code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>\n\n"
+        msg += f"\n<blockquote><b>Stop: </b>{cancel_task}</blockquote>\n\n"
 
     if len(msg) == 0 and status == "All":
         return None, None
@@ -179,6 +178,12 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
                 buttons.ibutton(label, f"status {sid} st {status_value}")
     buttons.ibutton("refresh", f"status {sid} ref", position="header")
     button = buttons.build_menu(8)
-    msg += f"<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}"
-    msg += f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {get_readable_time(time() - botStartTime)}"
+    msg += (
+        f"<b>CPU</b>: {cpu_percent()}% | "
+        f"<b>FREE</b>: {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}\n"
+        f"<b>RAM</b>: {virtual_memory().percent}% | "
+        f"<b>UPTM</b>: {get_readable_time(time() - botStartTime)}"
+    )
     return msg, button
+
+    

@@ -1,6 +1,6 @@
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
-from psutil import cpu_percent, virtual_memory, disk_usage
+from psutil import cpu_percent, virtual_memory, disk_usage, net_io_counters
 from time import time
 
 from bot import (
@@ -137,6 +137,8 @@ CL: {tasks['Clone']} | CH: {tasks['CheckUp']} | PA: {tasks['Pause']} | SV: {task
 ODLS: {get_readable_file_size(dl_speed)}/s
 OULS: {get_readable_file_size(up_speed)}/s
 OSDS: {get_readable_file_size(seed_speed)}/s
+
+BANDWIDTH: {get_readable_file_size(net_io_counters().bytes_sent + net_io_counters().bytes_recv)}
 """
         await query.answer(msg, show_alert=True)
 
