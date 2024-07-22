@@ -62,7 +62,7 @@ class TaskConfig:
         self.mid = self.message.id
         self.user = self.message.from_user or self.message.sender_chat
         self.user_id = self.user.id
-        self.userDict = user_data.get(self.user_id, {})
+        self.user_dict = user_data.get(self.user_id, {})
         self.dir = f"{DOWNLOAD_DIR}{self.mid}"
         self.link = ""
         self.upDest = ""
@@ -231,7 +231,7 @@ class TaskConfig:
         else:
             self.upDest = (
                 self.upDest
-                or self.userDict.get("leech_dest")
+                or self.user_dict.get("leech_dest")
                 or config_dict["LEECH_DUMP_CHAT"]
             )
             if self.upDest:
@@ -285,21 +285,21 @@ class TaskConfig:
                     self.splitSize = getSizeBytes(self.splitSize)
             self.splitSize = (
                 self.splitSize
-                or self.userDict.get("split_size")
+                or self.user_dict.get("split_size")
                 or config_dict["LEECH_SPLIT_SIZE"]
             )
             self.equalSplits = (
-                self.userDict.get("equal_splits")
+                self.user_dict.get("equal_splits")
                 or config_dict["EQUAL_SPLITS"]
-                and "equal_splits" not in self.userDict
+                and "equal_splits" not in self.user_dict
             )
             self.maxSplitSize = MAX_SPLIT_SIZE if self.userTransmission else 2097152000
             self.splitSize = min(self.splitSize, self.maxSplitSize)
 
             self.asDoc = (
-                self.userDict.get("as_doc", False)
+                self.user_dict.get("as_doc", False)
                 or config_dict["AS_DOCUMENT"]
-                and "as_doc" not in self.userDict
+                and "as_doc" not in self.user_dict
             )
 
             if is_telegram_link(self.thumb):
