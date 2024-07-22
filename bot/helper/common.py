@@ -231,7 +231,7 @@ class TaskConfig:
         else:
             self.upDest = (
                 self.upDest
-                or self.userDict.get("leech_dest")
+                or self.self.user_dict.get("leech_dest")
                 or config_dict["LEECH_DUMP_CHAT"]
             )
             if self.upDest:
@@ -245,7 +245,7 @@ class TaskConfig:
                     if self.upDest.isdigit() or self.upDest.startswith("-"):
                         self.upDest = int(self.upDest)
                     elif self.upDest.lower() == "pm":
-                        self.upDest = self.userId
+                        self.upDest = self.user_id
 
                 if self.userTransmission:
                     chat = await user.get_chat(self.upDest)
@@ -285,21 +285,21 @@ class TaskConfig:
                     self.splitSize = getSizeBytes(self.splitSize)
             self.splitSize = (
                 self.splitSize
-                or self.userDict.get("split_size")
+                or self.self.user_dict.get("split_size")
                 or config_dict["LEECH_SPLIT_SIZE"]
             )
             self.equalSplits = (
-                self.userDict.get("equal_splits")
+                self.self.user_dict.get("equal_splits")
                 or config_dict["EQUAL_SPLITS"]
-                and "equal_splits" not in self.userDict
+                and "equal_splits" not in self.self.user_dict
             )
             self.maxSplitSize = MAX_SPLIT_SIZE if self.userTransmission else 2097152000
             self.splitSize = min(self.splitSize, self.maxSplitSize)
 
             self.asDoc = (
-                self.userDict.get("as_doc", False)
+                self.self.user_dict.get("as_doc", False)
                 or config_dict["AS_DOCUMENT"]
-                and "as_doc" not in self.userDict
+                and "as_doc" not in self.self.user_dict
             )
 
             if is_telegram_link(self.thumb):
