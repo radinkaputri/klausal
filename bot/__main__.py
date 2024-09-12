@@ -18,7 +18,7 @@ from psutil import (
 )
 
 from .helper.ext_utils.files_utils import clean_all, exit_clean_up
-from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons
+from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, set_commands, create_help_buttons
 from .helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from .helper.ext_utils.db_handler import DbManger
 from .helper.telegram_helper.bot_commands import BotCommands
