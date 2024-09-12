@@ -1,7 +1,9 @@
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
+from pyrogram.types import InputMediaPhoto
 from aiofiles.os import remove as aioremove, path as aiopath, makedirs
 from os import getcwd
+from os import path as ospath
 from time import time
 from functools import partial
 from html import escape
@@ -27,7 +29,7 @@ from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
-from bot.helper.ext_utils.bot_utils import update_user_ldata, new_thread
+from bot.helper.ext_utils.bot_utils import update_user_ldata, new_thread, new_task
 from bot.helper.ext_utils.media_utils import createThumb, getSplitSizeBytes
 
 handler_dict = {}
@@ -156,31 +158,39 @@ async def get_user_settings(from_user):
     buttons.ibutton("Close", f"userset {user_id} close")
 
     text = f"""<u>Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
-Custom Thumbnail <b>{thumbmsg}</b>
-Leech Split Size is <b>{split_size}</b>
-Media Group is <b>{media_group}</b>
-Leech by <b>{leech_method}</b> session
-Rclone Config <b>{rccmsg}</b>
-Gdrive Token <b>{tokenmsg}</b>
-Stop Duplicate is <b>{sd_msg}</b>
-Default Upload is <b>{du}</b>
-Excluded Extensions is <code>{ex_ex}</code>
-YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
+Leech Type: <b>{ltype}</b>
+Thumbnail: <b>{thumbmsg}</b>
+Split Size: <b>{split_size}</b>
+Media Group: <b>{media_group}</b>
+Method: <b>{leech_method}</b>
+Rclone Config: <b>{rccmsg}</b>
+Gdrive Token: <b>{tokenmsg}</b>
+Stop Duplicate: <b>{sd_msg}</b>
+Upload: <b>{du}</b>"""
 
     return text, buttons.build_menu(2)
 
 
 async def update_user_settings(query):
     msg, button = await get_user_settings(query.from_user)
-    await editMessage(query.message, msg, button)
+    user_id = query.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = config_dict["THUMBNAIL_IMAGES"]
+    await editMessage(query.message, msg, button, thumbnail)
 
 
+@new_task
 async def user_settings(_, message):
     from_user = message.from_user
     handler_dict[from_user.id] = False
+    user_id = message.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = config_dict["THUMBNAIL_IMAGES"]
     msg, button = await get_user_settings(from_user)
-    await sendMessage(message, msg, button)
+    await sendMessage(message, msg, button, thumbnail)
+
 
 
 async def set_thumb(_, message, pre_event):
