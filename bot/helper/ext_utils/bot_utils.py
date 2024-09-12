@@ -11,7 +11,7 @@ from functools import partial, wraps
 from concurrent.futures import ThreadPoolExecutor
 from aiohttp import ClientSession
 
-from bot import user_data, config_dict, bot_loop
+from bot import user_data, config_dict, bot_loop, OWNER_ID
 from bot.helper.ext_utils.help_messages import YT_HELP_DICT, MIRROR_HELP_DICT
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.telegraph_helper import telegraph
