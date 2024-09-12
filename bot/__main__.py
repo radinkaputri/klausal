@@ -45,6 +45,7 @@ from .modules import (
     gd_search,
     mirror_leech,
     status,
+    speedtest,
     torrent_search,
     torrent_select,
     ytdlp,
