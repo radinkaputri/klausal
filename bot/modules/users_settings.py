@@ -100,9 +100,9 @@ async def get_user_settings(from_user):
     else:
         leech_method = "bot"
 
-    buttons.ibutton("Leech", f"userset {user_id} leech")
+    buttons.ibutton("Leech Settings", f"userset {user_id} leech")
 
-    buttons.ibutton("Rclone", f"userset {user_id} rclone")
+    buttons.ibutton("Rclone Tools", f"userset {user_id} rclone")
     rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
     if user_dict.get("rclone_path", False):
         rccpath = user_dict["rclone_path"]
@@ -159,22 +159,16 @@ async def get_user_settings(from_user):
 Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
 Leech Split Size is <b>{split_size}</b>
-Equal Splits is <b>{equal_splits}</b>
 Media Group is <b>{media_group}</b>
-Leech Prefix is <code>{escape(lprefix)}</code>
-Leech Destination is <code>{leech_dest}</code>
 Leech by <b>{leech_method}</b> session
 Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code>
 Gdrive Token <b>{tokenmsg}</b>
-Gdrive ID is <code>{gdrive_id}</code>
-Index Link is <code>{index}</code>
 Stop Duplicate is <b>{sd_msg}</b>
 Default Upload is <b>{du}</b>
 Excluded Extensions is <code>{ex_ex}</code>
 YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
 
-    return text, buttons.build_menu(1)
+    return text, buttons.build_menu(2)
 
 
 async def update_user_settings(query):

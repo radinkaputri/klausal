@@ -20,6 +20,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.bot_utils import (
     new_task,
     sync_to_async,
+    delete_links,
     new_thread,
     arg_parser,
     COMMAND_USAGE,
@@ -333,6 +334,8 @@ class YtDlp(TaskListener):
         bulk_end = 0
         reply_to = None
         opt = args["-opt"]
+        
+        await delete_links(self.message)
 
         if not isinstance(isBulk, bool):
             dargs = isBulk.split(":")

@@ -233,25 +233,21 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManger().rm_complete_task(self.message.link)
-        msg = f"<blockquote><b>Name: </b><code>{escape(self.name)}</code></blockquote>\n\n<b>Size: </b>{get_readable_file_size(size)}"
+        msg = (
+          f"<b><i>{escape(self.name)}</i></b>\n\n"
+          f"<b>Size: </b>{get_readable_file_size(size)}"
+          )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
             msg += f"\n<b>Total Files: </b>{folders}"
             if mime_type != 0:
                 msg += f"\n<b>Corrupted Files: </b>{mime_type}"
-            msg += f"\n<b>cc: </b>{self.tag}\n\n"
             if not files:
+                msg += f"\n<b><i>Files has been sent to your DM.</i></b>"
                 await sendMessage(self.message, msg)
             else:
-                fmsg = ""
-                for index, (link, name) in enumerate(files.items(), start=1):
-                    fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
-                    if len(fmsg.encode() + msg.encode()) > 4000:
-                        await sendMessage(self.message, msg + fmsg)
-                        await sleep(1)
-                        fmsg = ""
-                if fmsg != "":
-                    await sendMessage(self.message, msg + fmsg)
+                msg += f"\n<b><i>Files has been sent to your DC.</i></b>"
+                await sendMessage(self.message, msg)
             if self.seed:
                 if self.newDir:
                     await clean_target(self.newDir)
@@ -273,7 +269,10 @@ class TaskListener(TaskConfig):
             ):
                 buttons = ButtonMaker()
                 if link:
-                    buttons.ubutton("Drive Link", link)
+                  if link.startswith("https://drive.google.com/") and not config_dict["DISABLE_DRIVE_LINK"]:
+                    buttons.ubutton("ᴅʀɪᴠᴇ ʟɪɴᴋ", link, "header")
+                  elif not link.startswith("https://drive.google.com/"):
+                    buttons.url_button("ᴄʟᴏᴜᴅ ʟɪɴᴋ", link, "header")
                 else:
                     msg += f"\n\nPath: <code>{rclonePath}</code>"
                 if (
@@ -286,7 +285,7 @@ class TaskListener(TaskConfig):
                     share_url = f"{RCLONE_SERVE_URL}/{remote}/{url_path}"
                     if mime_type == "Folder":
                         share_url += "/"
-                    buttons.ubutton("Rclone Link", share_url)
+                    buttons.ubutton("ʀᴄʟᴏɴᴇ ʟɪɴᴋ", share_url)
                 if not rclonePath and dir_id:
                     INDEX_URL = ""
                     if self.privateLink:
@@ -299,15 +298,16 @@ class TaskListener(TaskConfig):
                         INDEX_URL = config_dict["INDEX_URL"]
                     if INDEX_URL:
                         share_url = f"{INDEX_URL}findpath?id={dir_id}"
-                        buttons.ubutton("Direct Link", share_url)
+                        buttons.ubutton("ᴅɪʀᴇᴄᴛ ʟɪɴᴋ", share_url)
                         if mime_type.startswith(("image", "video", "audio")):
                             share_urls = f"{INDEX_URL}findpath?id={dir_id}&view=true"
-                            buttons.ubutton("Stream Link", share_urls)
+                            buttons.ubutton("ꜱᴛʀᴇᴀᴍ ʟɪɴᴋ", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n\nPath: <code>{rclonePath}</code>"
+                msg += f"\nPath: <code>{rclonePath}</code>"
                 button = None
             msg += f"\n\n<b>cc: </b>{self.tag}"
+            msg += f"\n<b><i>Click the button below to Download</b></i>"
             await sendMessage(self.message, msg, button)
             if self.seed:
                 if self.newDir:

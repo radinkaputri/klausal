@@ -140,8 +140,7 @@ async def log(_, message):
 
 
 help_string = f"""
-NOTE: Try each command without any argument to see more detalis.
-<blockquote expandable>
+NOTE: Try each command without any argument to see more detalis.<blockquote expandable>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
 /{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to Google Drive using qBittorrent.
 /{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
@@ -172,8 +171,7 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.EvalCommand}: Run Python Code Line | Lines (Only Owner).
 /{BotCommands.ExecCommand}: Run Commands In Exec (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.EvalCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.
-</blockquote>
+/{BotCommands.RssCommand}: RSS Menu.</blockquote>
 """
 
 
@@ -234,6 +232,7 @@ async def main():
         clean_all(),
         torrent_search.initiate_search_tools(),
         restart_notification(),
+        set_commands(bot),
     )
     create_help_buttons()
     await sync_to_async(start_aria2_listener, wait=False)

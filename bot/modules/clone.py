@@ -19,6 +19,7 @@ from bot.helper.mirror_utils.status_utils.gdrive_status import GdriveStatus
 from bot.helper.ext_utils.bot_utils import (
     new_task,
     sync_to_async,
+    delete_links,
     new_task,
     cmd_exec,
     arg_parser,
@@ -67,6 +68,7 @@ class Clone(TaskListener):
     async def newEvent(self):
         text = self.message.text.split("\n")
         input_list = text[0].split(" ")
+        await delete_links(self.message)
 
         arg_base = {"link": "", "-i": 0, "-b": False, "-up": "", "-rcf": ""}
 
