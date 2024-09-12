@@ -233,8 +233,9 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManger().rm_complete_task(self.message.link)
+
         msg = (
-          f"<b><i>{escape(self.name)}</i></b>\n\n"
+          f"<b><i>{escape(self.name)}</i></b>\n"
           f"\n<code>Size   : </code>{get_readable_file_size(size)}"
           f"\n<code>User   : </code>{self.tag}"
           f"\n<code>UserID : </code>{self.message.from_user.id}"
@@ -242,6 +243,7 @@ class TaskListener(TaskConfig):
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
             msg += f"\n<code>Total  : </code>{folders}"
+            msg += f"\n<code>Mode   : </code>Leech"
             if mime_type != 0:
                 msg += f"\n<code>Corrupt:  </code>{mime_type}"
             if not files:
@@ -259,7 +261,8 @@ class TaskListener(TaskConfig):
                 await start_from_queued()
                 return
         else:
-            msg += f"\n\n<code>Type    :  </code>{mime_type}"
+            msg += f"\n<code>Type    :  </code>{mime_type}"
+            msg += f"\n<code>Mode    : </code>Cloud"
             if mime_type == "Folder":
                 msg += f"\n<code>SubFd  :  </code>{folders}"
                 msg += f"\n<code>Files  :  </code>{files}"

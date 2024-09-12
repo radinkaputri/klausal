@@ -84,8 +84,6 @@ class TaskConfig:
         self.compress = False
         self.select = False
         self.seed = False
-        self.compress = False
-        self.extract = False
         self.join = False
         self.privateLink = False
         self.stopDuplicate = False
