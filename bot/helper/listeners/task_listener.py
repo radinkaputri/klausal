@@ -235,18 +235,20 @@ class TaskListener(TaskConfig):
             await DbManger().rm_complete_task(self.message.link)
         msg = (
           f"<b><i>{escape(self.name)}</i></b>\n\n"
-          f"<b>Size: </b>{get_readable_file_size(size)}"
+          f"\n<code>Size   : </code>{get_readable_file_size(size)}"
+          f"\n<code>User   : </code>{self.tag}"
+          f"\n<code>UserID : </code>{self.message.from_user.id}"
           )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n<b>Total Files: </b>{folders}"
+            msg += f"\n<code>Total  : </code>{folders}"
             if mime_type != 0:
-                msg += f"\n<b>Corrupted Files: </b>{mime_type}"
+                msg += f"\n<code>Corrupt:  </code>{mime_type}"
             if not files:
-                msg += f"\n<b><i>Files has been sent to your DM.</i></b>"
+                msg += f"\n\n<b><i>Files has been sent to your DM.</i></b>"
                 await sendMessage(self.message, msg)
             else:
-                msg += f"\n<b><i>Files has been sent to your DC.</i></b>"
+                msg += f"\n\n<b><i>Files has been sent to your DC.</i></b>"
                 await sendMessage(self.message, msg)
             if self.seed:
                 if self.newDir:
@@ -257,10 +259,10 @@ class TaskListener(TaskConfig):
                 await start_from_queued()
                 return
         else:
-            msg += f"\n\n<b>Type: </b>{mime_type}"
+            msg += f"\n\n<code>Type    :  </code>{mime_type}"
             if mime_type == "Folder":
-                msg += f"\n<b>SubFolders: </b>{folders}"
-                msg += f"\n<b>Files: </b>{files}"
+                msg += f"\n<code>SubFd  :  </code>{folders}"
+                msg += f"\n<code>Files  :  </code>{files}"
             if (
                 link
                 or rclonePath
@@ -306,8 +308,7 @@ class TaskListener(TaskConfig):
             else:
                 msg += f"\nPath: <code>{rclonePath}</code>"
                 button = None
-            msg += f"\n\n<b>cc: </b>{self.tag}"
-            msg += f"\n<b><i>Click the button below to Download</b></i>"
+            msg += f"\n\n<b><i>Click the button below to Download</b></i>"
             await sendMessage(self.message, msg, button)
             if self.seed:
                 if self.newDir:
