@@ -134,11 +134,11 @@ async def get_user_settings(from_user):
     default_upload = (
         user_dict.get("default_upload", "") or config_dict["DEFAULT_UPLOAD"]
     )
-    du = "Gdrive API" if default_upload == "gd" else "Rclone"
+    du = "GdriveAPI" if default_upload == "gd" else "Rclone"
     dub = "Gdrive API" if default_upload != "gd" else "Rclone"
-    buttons.ibutton(f"Upload using {dub}", f"userset {user_id} {default_upload}")
+    buttons.ibutton(f"Up via {dub}", f"userset {user_id} {default_upload}")
 
-    buttons.ibutton("Excluded Extensions", f"userset {user_id} ex_ex")
+    buttons.ibutton("Excluded Ext", f"userset {user_id} ex_ex")
     if user_dict.get("excluded_extensions", False):
         ex_ex = user_dict["excluded_extensions"]
     elif "excluded_extensions" not in user_dict and GLOBAL_EXTENSION_FILTER:

@@ -70,14 +70,14 @@ class TelegraphHelper:
                     nxt_page += 1
             await self.edit_page(
                 path=path[prev_page],
-                title="𝙓𝙔𝙍𝘼𝘿 𝙏𝙊𝙍𝙍𝙀𝙉𝙏 𝙎𝙄𝙏𝙀 𝙎𝙀𝘼𝙍𝘾𝙃",
+                title="𝚇𝚈𝚁𝙰𝙳 𝚃𝙾𝚁𝚁𝙴𝙽𝚃 𝚂𝙸𝚃𝙴 𝚂𝙴𝙰𝚁𝙲𝙷",
                 content=content,
             )
         return
 
 
 telegraph = TelegraphHelper(
-    "kusuma-", "https://t.me/xyradelw"
+    "ima?", "https://t.me/xyradelw"
 )
 
 bot_loop.run_until_complete(telegraph.create_account())

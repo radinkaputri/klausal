@@ -161,7 +161,7 @@ class gdSearch(GoogleDriveHelper):
                         msg += f' <b>- <a href="{url}">Direct Link</a></b>'
                         if mime_type.startswith(("image", "video", "audio")):
                             urlv = f'{index_url}findpath?id={file.get("id")}&view=true'
-                            msg += f' <b>| <a href="{urlv}">Stream Link</a></b>'
+                            msg += f' <b>- <a href="{urlv}">Stream Link</a></b>'
                 msg += "<br><br>"
                 contents_no += 1
                 if len(msg.encode("utf-8")) > 39000:
