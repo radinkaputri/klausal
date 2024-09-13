@@ -117,7 +117,7 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
     for index, task in enumerate(tasks[start_position: STATUS_LIMIT + start_position], start=1):
         tstatus = task.status()
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
-        cancel_task = f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>"
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
 
         if CustomFilters.authorized:
             if task.listener.isSuperChat:

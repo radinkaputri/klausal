@@ -1,14 +1,16 @@
 from asyncio import sleep
+from re import search as re_search
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
-from bot import task_dict, bot, task_dict_lock, OWNER_ID, user_data, multi_tags
+from bot import task_dict, bot, bot_name, task_dict_lock, OWNER_ID, user_data, multi_tags
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     auto_delete_message,
     deleteMessage,
+    editMessage,
 )
 from bot.helper.ext_utils.status_utils import getTaskByGid, getAllTasks, MirrorStatus
 from bot.helper.ext_utils.bot_utils import new_task
@@ -17,16 +19,29 @@ from bot.helper.telegram_helper import button_build
 
 async def cancel_task(_, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
-    msg = message.text.split()
-    if len(msg) > 1:
-        gid = msg[1]
+    msg = re_search(
+        rf"/(?:{BotCommands.CancelTaskCommand[0]}|{BotCommands.CancelTaskCommand[1]})(?:@{bot_name})?[_ ]([a-zA-Z0-9_-]+)(?:@{bot_name})?",
+        message.text
+    )
+    try:
+        gid = msg.group(1)  # type: ignore
+    except AttributeError:
+        gid = None
+    if gid is not None:
         if len(gid) == 4:
             multi_tags.discard(gid)
             return
         else:
             task = await getTaskByGid(gid)
             if task is None:
-                await sendMessage(message, f"GID: <code>{gid}</code> Not Found.")
+                tmsg = await sendMessage(
+                    message,
+                    f"GID: <code>{gid}</code> Not Found."
+                )
+                await auto_delete_message(
+                    message,
+                    tmsg
+                )
                 return
     elif reply_to_id := message.reply_to_message_id:
         async with task_dict_lock:
@@ -34,10 +49,10 @@ async def cancel_task(_, message):
         if task is None:
             await sendMessage(message, "This is not an active task!")
             return
-    elif len(msg) == 1:
+    elif msg is None or len(msg) == 1:  # Perubahan disini
         msg = (
             "Reply to an active Command message which was used to start the download"
-            f" or send <code>/{BotCommands.CancelTaskCommand} GID</code> to cancel it!"
+            f" or send <code>/{BotCommands.CancelTaskCommand[0]} GID</code> to cancel it!"
         )
         await sendMessage(message, msg)
         return
@@ -122,6 +137,14 @@ bot.add_handler(
     MessageHandler(
         cancel_task,
         filters=command(BotCommands.CancelTaskCommand) & CustomFilters.authorized,
+    )
+)
+bot.add_handler(  # type: ignore
+    MessageHandler(
+        cancel_task,
+        filters=regex(
+            rf"^/{BotCommands.CancelTaskCommand[1]}(_\w+)?(?!all)"
+        ) & CustomFilters.authorized,
     )
 )
 bot.add_handler(

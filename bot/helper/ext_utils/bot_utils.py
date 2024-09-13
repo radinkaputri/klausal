@@ -142,7 +142,7 @@ async def set_commands(client):
             "Periksa statistik bot."
         ),
         BotCommand(
-            f"{BotCommands.CancelTaskCommand}",
+            f"{BotCommands.CancelTaskCommand[0]}",
             "Batalkan tugas."
         ),
         BotCommand(
