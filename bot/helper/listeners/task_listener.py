@@ -264,8 +264,8 @@ class TaskListener(TaskConfig):
             msg += f"\n<code>Type   : </code>{mime_type}"
             msg += f"\n<code>Mode   : </code>Cloud"
             if mime_type == "Folder":
-                msg += f"\n<code>SubFd  :  </code>{folders}"
-                msg += f"\n<code>Files  :  </code>{files}"
+                msg += f"\n<code>SubFd  : </code>{folders}"
+                msg += f"\n<code>Files  : </code>{files}"
             if (
                 link
                 or rclonePath
