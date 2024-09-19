@@ -452,56 +452,48 @@ if ospath.exists("list_drives.txt"):
             else:
                 INDEX_URLS.append("")
 
-if BASE_URL:
-    Popen(
-        f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent",
-        shell=True,
-    )
+PORT = environ.get('PORT')
+Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 
-srun(["qbittorrent-nox", "-d", f"--profile={getcwd()}"])
-if not ospath.exists(".netrc"):
-    with open(".netrc", "w"):
-        pass
-srun(
-    "chmod 600 .netrc && cp .netrc /root/.netrc && chmod +x aria.sh && ./aria.sh",
-    shell=True,
-)
-if ospath.exists("accounts.zip"):
-    if ospath.exists("accounts"):
+srun(["openstack", "-d", f"--profile={getcwd()}"])
+if not ospath.exists('.netrc'):
+    with open('.netrc', 'w'):
+       pass
+srun(["chmod", "600", ".netrc"])
+srun(["cp", ".netrc", "/root/.netrc"])
+
+trackers = check_output("curl -Ns https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt https://ngosang.github.io/trackerslist/trackers_all_http.txt https://newtrackon.com/api/all https://raw.githubusercontent.com/hezhijie0327/Trackerslist/main/trackerslist_tracker.txt | awk '$0' | tr '\n\n' ','", shell=True).decode('utf-8').rstrip(',')
+with open("a2c.conf", "a+") as a:
+    if TORRENT_TIMEOUT is not None:
+        a.write(f"bt-stop-timeout={TORRENT_TIMEOUT}\n")
+    a.write(f"bt-tracker=[{trackers}]")
+srun(["buffet", "--conf-path=/usr/src/app/a2c.conf"])
+
+if ospath.exists('accounts.zip'):
+    if ospath.exists('accounts'):
         srun(["rm", "-rf", "accounts"])
-    srun(["7z", "x", "-o.", "-aoa", "accounts.zip", "accounts/*.json"])
-    srun(["chmod", "-R", "777", "accounts"])
-    osremove("accounts.zip")
-if not ospath.exists("accounts"):
-    config_dict["USE_SERVICE_ACCOUNTS"] = False
+    srun(["7z", "x", "-o.", "-bso0", "-aoa", "accounts.zip", "accounts/*.json", "&&", "chmod", "-R", "777", "accounts"])
+    osremove('accounts.zip')
+if not ospath.exists('accounts'):
+    config_dict['USE_SERVICE_ACCOUNTS'] = False
+alive = Popen(["python3", "alive.py"])
+sleep(0.5)
 
 
 def get_client():
     return qbClient(host="localhost", port=8090, REQUESTS_ARGS={"timeout": (30, 60)})
 
 
-aria2c_global = [
-    "bt-max-open-files",
-    "download-result",
-    "keep-unfinished-download-result",
-    "log",
-    "log-level",
-    "max-concurrent-downloads",
-    "max-download-result",
-    "max-overall-download-limit",
-    "save-session",
-    "max-overall-upload-limit",
-    "optimize-concurrent-downloads",
-    "save-cookies",
-    "server-stat-of",
-]
+aria2c_global = ['bt-max-open-files', 'download-result', 'keep-unfinished-download-result', 'log', 'log-level',
+                 'max-concurrent-downloads', 'max-download-result', 'max-overall-download-limit', 'save-session',
+                 'max-overall-upload-limit', 'optimize-concurrent-downloads', 'save-cookies', 'server-stat-of']
 
 qb_client = get_client()
 if not qbit_options:
     qbit_options = dict(qb_client.app_preferences())
-    del qbit_options["listen_port"]
+    del qbit_options['listen_port']
     for k in list(qbit_options.keys()):
-        if k.startswith("rss"):
+        if k.startswith('rss'):
             del qbit_options[k]
 else:
     qb_opt = {**qbit_options}
@@ -510,19 +502,17 @@ else:
             del qb_opt[k]
     qb_client.app_set_preferences(qb_opt)
 
-log_info("Creating client from BOT_TOKEN")
-bot = tgClient(
-    "bot",
-    TELEGRAM_API,
-    TELEGRAM_HASH,
-    bot_token=BOT_TOKEN,
-    workers=1000,
-    parse_mode=enums.ParseMode.HTML,
-    max_concurrent_transmissions=10,
-).start()
+bot = tgClient('bot',
+            TELEGRAM_API,
+            TELEGRAM_HASH,
+            bot_token=BOT_TOKEN,
+            workers=1000,
+            parse_mode=enums.ParseMode.HTML
+            ).start()
+
 bot_loop = bot.loop
 bot_name = bot.me.username
-
+log_info(f"Starting Bot @{bot_name}...")
 scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
 
 if not aria2_options:
@@ -530,3 +520,4 @@ if not aria2_options:
 else:
     a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
     aria2.set_global_options(a2c_glo)
+

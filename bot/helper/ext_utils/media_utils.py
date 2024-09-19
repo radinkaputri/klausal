@@ -161,7 +161,7 @@ async def take_ss(video_file, ss_nb) -> list:
         for i in range(ss_nb):
             output = f"{dirpath}SS.{name}_{i:02}.png"
             outputs.append(output)
-            cmd += f'ffmpeg -hide_banner -loglevel error -ss {cap_time} -i "{video_file}" -q:v 1 -frames:v 1 "{output}"'
+            cmd += f'render -hide_banner -loglevel error -ss {cap_time} -i "{video_file}" -q:v 1 -frames:v 1 "{output}"'
             cap_time += interval
             if i + 1 != ss_nb:
                 cmd += " && "
@@ -182,7 +182,7 @@ async def get_audio_thumb(audio_file):
     await makedirs(des_dir, exist_ok=True)
     des_dir = f"Thumbnails/{time()}.jpg"
     cmd = [
-        "ffmpeg",
+        "render",
         "-hide_banner",
         "-loglevel",
         "error",
@@ -261,7 +261,7 @@ async def split_file(
         while i <= parts or start_time < duration - 4:
             out_path = f"{base_name}.part{i:03}{extension}"
             cmd = [
-                "ffmpeg",
+                "render",
                 "-hide_banner",
                 "-loglevel",
                 "error",

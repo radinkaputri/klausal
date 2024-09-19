@@ -174,7 +174,7 @@ class Clone(TaskListener):
             remote, src_path = self.link.split(":", 1)
             src_path = src_path.strip("/")
 
-            cmd = f'rclone lsjson --fast-list --stat --no-modtime --config {config_path} "{remote}:{src_path}"'
+            cmd = f'zcl lsjson --fast-list --stat --no-modtime --config {config_path} "{remote}:{src_path}"'
             res = await cmd_exec(cmd, shell=True)
             if res[2] != 0:
                 if res[2] != -9:
@@ -209,10 +209,10 @@ class Clone(TaskListener):
             if not flink:
                 return
             LOGGER.info(f"Cloning Done: {self.name}")
-            cmd1 = f'rclone lsf --fast-list -R --files-only --config {config_path} "{destination}"'
-            cmd2 = f'rclone lsf --fast-list -R --dirs-only --config {config_path} "{destination}"'
+            cmd1 = f'zcl lsf --fast-list -R --files-only --config {config_path} "{destination}"'
+            cmd2 = f'zcl lsf --fast-list -R --dirs-only --config {config_path} "{destination}"'
             cmd3 = (
-                f'rclone size --fast-list --json --config {config_path} "{destination}"'
+                f'zcl size --fast-list --json --config {config_path} "{destination}"'
             )
             res1, res2, res3 = await gather(
                 cmd_exec(cmd1, shell=True),

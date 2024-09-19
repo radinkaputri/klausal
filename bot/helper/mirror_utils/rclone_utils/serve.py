@@ -34,7 +34,7 @@ async def rclone_serve_booter():
             RcloneServe.clear()
         except:
             pass
-    cmd = f"rclone serve http --config rclone.conf --no-modtime combine: --addr :{config_dict['RCLONE_SERVE_PORT']}"
+    cmd = f"zcl serve http --config rclone.conf --no-modtime combine: --addr :{config_dict['RCLONE_SERVE_PORT']}"
     cmd += " --vfs-cache-mode full --vfs-cache-max-age 1m0s --buffer-size 64M"
     if (user := config_dict["RCLONE_SERVE_USER"]) and (
         pswd := config_dict["RCLONE_SERVE_PASS"]
