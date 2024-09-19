@@ -212,7 +212,7 @@ async def create_thumbnail(video_file, duration):
         duration = 3
     duration = duration // 2
     cmd = [
-        "ffmpeg",
+        "render",
         "-hide_banner",
         "-loglevel",
         "error",
@@ -407,7 +407,7 @@ async def createSampleVideo(
     filter_complex += f"concat=n={len(segments)}:v=1:a=1[vout][aout]"
 
     cmd = [
-        "ffmpeg",
+        "render",
         "-i",
         video_file,
         "-filter_complex",
