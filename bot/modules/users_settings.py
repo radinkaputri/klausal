@@ -158,15 +158,16 @@ async def get_user_settings(from_user):
     buttons.ibutton("Close", f"userset {user_id} close")
 
     text = f"""<u>Settings for {name}</u>
-Leech Type: <b>{ltype}</b>
-Thumbnail: <b>{thumbmsg}</b>
-Split Size: <b>{split_size}</b>
-Media Group: <b>{media_group}</b>
-Method: <b>{leech_method}</b>
-Rclone Config: <b>{rccmsg}</b>
-Gdrive Token: <b>{tokenmsg}</b>
-Stop Duplicate: <b>{sd_msg}</b>
-Upload: <b>{du}</b>"""
+<code>Leech Type      </code>: <b>{ltype}</b>
+<code>Thumbnail       </code>: <b>{thumbmsg}</b>
+<code>Split Size      </code>: <b>{split_size}</b>
+<code>Media Group     </code>: <b>{media_group}</b>
+<code>Method          </code>: <b>{leech_method}</b>
+<code>Rclone Config   </code>: <b>{rccmsg}</b>
+<code>Gdrive Token    </code>: <b>{tokenmsg}</b>
+<code>Stop Duplicate  </code>: <b>{sd_msg}</b>
+<code>Upload          </code>: <b>{du}</b>
+"""
 
     return text, buttons.build_menu(2)
 
@@ -347,12 +348,12 @@ async def edit_user_settings(client, query):
         buttons = ButtonMaker()
         buttons.ibutton("Thumbnail", f"userset {user_id} sthumb")
         thumbmsg = "Exists" if await aiopath.exists(thumbpath) else "Not Exists"
-        buttons.ibutton("Leech Split Size", f"userset {user_id} lss")
+        buttons.ibutton("Split Size", f"userset {user_id} lss")
         if user_dict.get("split_size", False):
             split_size = user_dict["split_size"]
         else:
             split_size = config_dict["LEECH_SPLIT_SIZE"]
-        buttons.ibutton("Leech Destination", f"userset {user_id} ldest")
+        buttons.ibutton("Dump Chat", f"userset {user_id} ldest")
         if user_dict.get("leech_dest", False):
             leech_dest = user_dict["leech_dest"]
         elif "leech_dest" not in user_dict and (LD := config_dict["LEECH_DUMP_CHAT"]):
@@ -374,31 +375,31 @@ async def edit_user_settings(client, query):
             and config_dict["AS_DOCUMENT"]
         ):
             ltype = "DOCUMENT"
-            buttons.ibutton("Send As Media", f"userset {user_id} as_doc false")
+            buttons.ibutton("Send Med", f"userset {user_id} as_doc false")
         else:
             ltype = "MEDIA"
-            buttons.ibutton("Send As Document", f"userset {user_id} as_doc true")
+            buttons.ibutton("Send Doc", f"userset {user_id} as_doc true")
         if (
             user_dict.get("equal_splits", False)
             or "equal_splits" not in user_dict
             and config_dict["EQUAL_SPLITS"]
         ):
             buttons.ibutton(
-                "Disable Equal Splits", f"userset {user_id} equal_splits false"
+                "Disable Eq Splits", f"userset {user_id} equal_splits false"
             )
             equal_splits = "Enabled"
         else:
-            buttons.ibutton("Enable Equal Splits", f"userset {user_id} equal_splits true")
+            buttons.ibutton("Enable Eq Splits", f"userset {user_id} equal_splits true")
             equal_splits = "Disabled"
         if (
             user_dict.get("media_group", False)
             or "media_group" not in user_dict
             and config_dict["MEDIA_GROUP"]
         ):
-            buttons.ibutton("Disable Media Group", f"userset {user_id} media_group false")
+            buttons.ibutton("Disable Group", f"userset {user_id} media_group false")
             media_group = "Enabled"
         else:
-            buttons.ibutton("Enable Media Group", f"userset {user_id} media_group true")
+            buttons.ibutton("Enable Group", f"userset {user_id} media_group true")
             media_group = "Disabled"
         if (
             IS_PREMIUM_USER
@@ -420,21 +421,21 @@ async def edit_user_settings(client, query):
         buttons.ibutton("Back", f"userset {user_id} back")
         buttons.ibutton("Close", f"userset {user_id} close")
         text = f"""<u>Leech Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
-Custom Thumbnail <b>{thumbmsg}</b>
-Leech Split Size is <b>{split_size}</b>
-Equal Splits is <b>{equal_splits}</b>
-Media Group is <b>{media_group}</b>
-Leech Prefix is <code>{escape(lprefix)}</code>
-Leech Destination is <code>{leech_dest}</code>
-Leech by <b>{leech_method}</b> session
+<code>Type       </code>: <b>{ltype}</b>
+<code>Thumbnail  </code>: <b>{thumbmsg}</b>
+<code>Split Size </code>: <b>{split_size}</b>
+<code>Equal      </code>: <b>{equal_splits}</b>
+<code>Group      </code>: <b>{media_group}</b>
+<code>Prefix     </code>: <b>{escape(lprefix)}</b>
+<code>Dump Chat  </code>: <b>{leech_dest}</b>
+<code>Leech by   </code>: <b>{leech_method}</b> session
 """
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "rclone":
         await query.answer()
         buttons = ButtonMaker()
         buttons.ibutton("Rclone Config", f"userset {user_id} rcc")
-        buttons.ibutton("Default Rclone Path", f"userset {user_id} rcp")
+        buttons.ibutton("Default Path", f"userset {user_id} rcp")
         buttons.ibutton("Back", f"userset {user_id} back")
         buttons.ibutton("Close", f"userset {user_id} close")
         rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
@@ -445,14 +446,15 @@ Leech by <b>{leech_method}</b> session
         else:
             rccpath = "None"
         text = f"""<u>Rclone Settings for {name}</u>
-Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code>"""
-        await editMessage(message, text, buttons.build_menu(1))
+<code>Config  </code>: <b>{rccmsg}</b>
+<code>Path    </code>: <b>{rccpath}</b>
+"""
+        await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "gdrive":
         await query.answer()
         buttons = ButtonMaker()
         buttons.ibutton("token.pickle", f"userset {user_id} token")
-        buttons.ibutton("Default Gdrive ID", f"userset {user_id} gdid")
+        buttons.ibutton("Default ID", f"userset {user_id} gdid")
         buttons.ibutton("Index URL", f"userset {user_id} index")
         if (
             user_dict.get("stop_duplicate", False)
@@ -460,12 +462,12 @@ Rclone Path is <code>{rccpath}</code>"""
             and config_dict["STOP_DUPLICATE"]
         ):
             buttons.ibutton(
-                "Disable Stop Duplicate", f"userset {user_id} stop_duplicate false"
+                "Allow Duplicate", f"userset {user_id} stop_duplicate false"
             )
             sd_msg = "Enabled"
         else:
             buttons.ibutton(
-                "Enable Stop Duplicate", f"userset {user_id} stop_duplicate true"
+                "Stop Duplicate", f"userset {user_id} stop_duplicate true"
             )
             sd_msg = "Disabled"
         buttons.ibutton("Back", f"userset {user_id} back")
@@ -479,11 +481,12 @@ Rclone Path is <code>{rccpath}</code>"""
             gdrive_id = "None"
         index = user_dict["index_url"] if user_dict.get("index_url", False) else "None"
         text = f"""<u>Gdrive Tools Settings for {name}</u>
-Gdrive Token <b>{tokenmsg}</b>
-Gdrive ID is <code>{gdrive_id}</code>
-Index URL is <code>{index}</code>
-Stop Duplicate is <b>{sd_msg}</b>"""
-        await editMessage(message, text, buttons.build_menu(1))
+<code>Token         </code>: <b>{tokenmsg}</b>
+<code>ID            </code>: <b>{gdrive_id}</b>
+<code>Index URL     </code>: <b>{index}</b>
+<code>Stop Duplicate</code>: <b>{sd_msg}</b>
+"""
+        await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "vthumb":
         await query.answer()
         await sendFile(message, thumb_path, name)
@@ -499,7 +502,7 @@ Stop Duplicate is <b>{sd_msg}</b>"""
         await editMessage(
             message,
             "Send a photo to save it as custom thumbnail. Timeout: 60 sec",
-            buttons.build_menu(1),
+            buttons.build_menu(2),
         )
         pfunc = partial(set_thumb, pre_event=query)
         await event_handler(client, query, pfunc, True)
