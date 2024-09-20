@@ -3,6 +3,7 @@ from bot.helper.ext_utils.status_utils import (
     get_readable_file_size,
     get_readable_time,
 )
+from bot.helper.ext_utils.bot_utils import safemode_message
 
 
 class GdriveStatus:
@@ -12,7 +13,8 @@ class GdriveStatus:
         self._gid = gid
         self._status = status
         self.listener = listener
-        self.engine = "GdriveApi"
+        self.safemode_msg = safemode_message()
+        self.engine = "GdriveAPI"
 
     def processed_bytes(self):
         return get_readable_file_size(self._obj.processed_bytes)

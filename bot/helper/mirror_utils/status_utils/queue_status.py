@@ -1,5 +1,6 @@
 from bot import LOGGER
 from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStatus
+from bot.helper.ext_utils.bot_utils import safemode_message
 
 
 class QueueStatus:
@@ -8,7 +9,8 @@ class QueueStatus:
         self._gid = gid
         self._status = status
         self.listener = listener
-        self.engine = "OnQueue"
+        self.safemode_msg = safemode_message()
+        self.engine = "queue"
 
     def gid(self):
         return self._gid

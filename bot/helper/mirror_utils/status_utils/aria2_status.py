@@ -2,7 +2,7 @@ from time import time
 
 from bot import aria2, LOGGER
 from bot.helper.ext_utils.status_utils import MirrorStatus, get_readable_time
-from bot.helper.ext_utils.bot_utils import sync_to_async
+from bot.helper.ext_utils.bot_utils import sync_to_async, safemode_message
 
 
 def get_download(gid, old_info=None):
@@ -20,6 +20,7 @@ class Aria2Status:
         self.listener = listener
         self.queued = queued
         self.start_time = 0
+        self.safemode_msg = safemode_message()
         self.seeding = seeding
         self.engine = "Aria2c"
 

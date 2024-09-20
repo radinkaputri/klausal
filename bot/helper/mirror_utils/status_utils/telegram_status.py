@@ -3,6 +3,7 @@ from bot.helper.ext_utils.status_utils import (
     get_readable_file_size,
     get_readable_time,
 )
+from bot.helper.ext_utils.bot_utils import safemode_message
 
 
 class TelegramStatus:
@@ -12,6 +13,7 @@ class TelegramStatus:
         self._gid = gid
         self._status = status
         self.listener = listener
+        self.safemode_msg = safemode_message()
         self.engine = "Pyrogram"
 
     def processed_bytes(self):

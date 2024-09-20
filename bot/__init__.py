@@ -227,7 +227,6 @@ if len(MEGA_EMAIL) == 0 or len(MEGA_PASSWORD) == 0:
     MEGA_EMAIL = ""
     MEGA_PASSWORD = ""
 
-
 FILELION_API = environ.get("FILELION_API", "")
 if len(FILELION_API) == 0:
     FILELION_API = ""
@@ -235,6 +234,11 @@ if len(FILELION_API) == 0:
 STREAMWISH_API = environ.get("STREAMWISH_API", "")
 if len(STREAMWISH_API) == 0:
     STREAMWISH_API = ""
+
+SAFE_MODE = environ.get('SAFE_MODE', '')
+if len(SAFE_MODE) == 0:
+    log_warning('SAFE_MODE Is Not Enabled')
+    SAFE_MODE = ''
 
 INDEX_URL = environ.get("INDEX_URL", "").rstrip("/")
 if len(INDEX_URL) == 0:
@@ -414,6 +418,7 @@ config_dict = {
     "RCLONE_SERVE_PORT": RCLONE_SERVE_PORT,
     "RSS_CHAT": RSS_CHAT,
     "RSS_DELAY": RSS_DELAY,
+    "SAFE_MODE": SAFE_MODE,
     "SEARCH_API_LINK": SEARCH_API_LINK,
     "SEARCH_LIMIT": SEARCH_LIMIT,
     "SEARCH_PLUGINS": SEARCH_PLUGINS,

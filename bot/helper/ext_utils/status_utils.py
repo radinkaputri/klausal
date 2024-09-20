@@ -10,18 +10,18 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 SIZE_UNITS = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload 📤"
-    STATUS_DOWNLOADING = "Download 📥"
-    STATUS_CLONING = "Clone 🧬"
-    STATUS_QUEUEDL = "QueueDl ⏳"
-    STATUS_QUEUEUP = "QueueUp ⏳"
-    STATUS_PAUSED = "Pause ⏸️"
-    STATUS_ARCHIVING = "Archive 🗃️"
-    STATUS_EXTRACTING = "Extract 📂"
-    STATUS_SPLITTING = "Split ✂️"
-    STATUS_CHECKING = "CheckUp 🔍"
-    STATUS_SEEDING = "Seed 🌱"
-    STATUS_SAMVID = "SamVid 🎥"
+    STATUS_UPLOADING = "Upload"
+    STATUS_DOWNLOADING = "Download"
+    STATUS_CLONING = "Clone"
+    STATUS_QUEUEDL = "QueueDl"
+    STATUS_QUEUEUP = "QueueUp"
+    STATUS_PAUSED = "Pause"
+    STATUS_ARCHIVING = "Archive"
+    STATUS_EXTRACTING = "Extract"
+    STATUS_SPLITTING = "Split"
+    STATUS_CHECKING = "CheckUp"
+    STATUS_SEEDING = "Seed"
+    STATUS_SAMVID = "SamVid"
 
 STATUSES = {
     "ALL": "All",
@@ -119,16 +119,15 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
         cancel_task = f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
 
-        if CustomFilters.authorized:
-            if task.listener.isSuperChat:
-                msg += f"<pre><b>{escape(f'{task.name()}')}</b></pre>"
-            else:
-                msg += f"<pre><b>AUTHORIZED USER TASK 🔐</b></pre>"
+        if config_dict['SAFE_MODE']:
+            msg += f"<pre>{tstatus}: {task.safemode_msg}..</pre>"
+        else:
+            msg += f"<pre><a href='{task.listener.message.link}'>{tstatus}</a>: "
+            msg += f"{escape(f'{task.name()}')}</pre>"
 
-        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP]:
+        if tstatus not in [MirrorStatus.STATUS_SEEDING, MirrorStatus.STATUS_QUEUEUP, MirrorStatus.STATUS_SPLITTING]:
             msg += (
-                f"\n{get_progress_bar_string(task.progress())} {task.progress()}"
-                f"\n<code>Status :</code> <b>{tstatus}</b>"
+                f"\n{get_progress_bar_string(task.progress())} ➜ {task.progress()}"
                 f"\n<code>Size   :</code> {task.size()}"
                 f"\n<code>Done   :</code> {task.processed_bytes()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
@@ -168,8 +167,8 @@ def get_readable_message(sid, is_user, page_no=1, status="All", page_step=1):
         buttons.ibutton("ʙᴏᴛ\nɪɴꜰᴏ", f"status {sid} ov", position="header")
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Page:</b> {page_no}/{pages} | <b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
-        buttons.ibutton("⫷", f"status {sid} pre", position="header")
-        buttons.ibutton("⫸", f"status {sid} nex", position="header")
+        buttons.ibutton("⫷", f"status {sid} pre")
+        buttons.ibutton("⫸", f"status {sid} nex")
         if tasks_no > 30:
             for i in [1, 2, 4, 6, 8, 10, 15]:
                 buttons.ibutton(i, f"status {sid} ps {i}", position="footer")

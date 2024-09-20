@@ -6,7 +6,7 @@ from bot.helper.ext_utils.status_utils import (
     MirrorStatus,
     get_readable_time,
 )
-from bot.helper.ext_utils.bot_utils import async_to_sync
+from bot.helper.ext_utils.bot_utils import async_to_sync, safemode_message
 from bot.helper.ext_utils.files_utils import get_path_size
 
 
@@ -16,7 +16,8 @@ class ZipStatus:
         self._gid = gid
         self._start_time = time()
         self.listener = listener
-        self.engine = "7zip"
+        self.safemode_msg = safemode_message()
+        self.engine = "7Zip"
 
     def gid(self):
         return self._gid
